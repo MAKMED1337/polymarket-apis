@@ -58,9 +58,10 @@ class BaseWeb3Client(ABC):
         private_key: str,
         signature_type: Literal[0, 1, 2],
         chain_id: Literal[137, 80002] = POLYGON,
+        rpc_url: str = "https://polygon.drpc.org",
     ):
         self.client = httpx.Client(http2=True, timeout=30.0)
-        self.w3 = Web3(Web3.HTTPProvider("https://polygon-rpc.com"))
+        self.w3 = Web3(Web3.HTTPProvider(rpc_url))
         self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)  # type: ignore[arg-type]
         self.w3.middleware_onion.inject(
             SignAndSendRawMiddlewareBuilder.build(private_key),  # type: ignore[arg-type]
@@ -227,12 +228,12 @@ class BaseWeb3Client(ABC):
 
     def get_poly_proxy_address(self, address: EthAddress | None = None) -> EthAddress:
         """Get the Polymarket proxy address."""
-        address = address if address else self.account.address
+        address = address or self.account.address
         return self.exchange.functions.getPolyProxyWalletAddress(address).call()
 
     def get_safe_proxy_address(self, address: EthAddress | None = None) -> EthAddress:
         """Get the Safe proxy address."""
-        address = address if address else self.account.address
+        address = address or self.account.address
         return self.safe_proxy_factory.functions.computeProxyAddress(address).call()
 
     def get_pol_balance(self) -> float:
@@ -413,8 +414,9 @@ class PolymarketWeb3Client(BaseWeb3Client):
         private_key: str,
         signature_type: Literal[0, 1, 2] = 1,
         chain_id: Literal[137, 80002] = POLYGON,
+        rpc_url: str = "https://polygon.drpc.org",
     ):
-        super().__init__(private_key, signature_type, chain_id)
+        super().__init__(private_key, signature_type, chain_id, rpc_url)
 
     def _execute(
         self,
@@ -680,7 +682,7 @@ class PolymarketGaslessWeb3Client(BaseWeb3Client):
         self.sign_url = "https://builder-signing-server.vercel.app/sign"
         self.relay_hub = "0xD216153c06E857cD7f72665E0aF1d7D82172F494"
         self.relay_address = "0x7db63fe6d62eb73fb01f8009416f4c2bb4fbda6a"
-        self.builder_creds = builder_creds if builder_creds else None
+        self.builder_creds = builder_creds or None
 
     def _execute(
         self,
