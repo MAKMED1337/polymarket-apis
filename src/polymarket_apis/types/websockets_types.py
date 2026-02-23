@@ -53,7 +53,6 @@ class PriceChangeEvent(PriceChanges):
 
 
 class TickSizeChangeEvent(TickSizeChange):
-    side: Literal["BUY", "SELL"]
     timestamp: datetime
     event_type: Literal["tick_size_change"]
 
