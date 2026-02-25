@@ -50,8 +50,11 @@ def _load_abi(contract_name: str) -> ABI:
         return cast("ABI", load(f))
 
 
+RESET_ERROR_REGEX = re.compile(r"resets in\s+(\d+)\s+seconds")
+
+
 def _parse_reset_seconds(error_message: str) -> int:
-    m = re.search(r"resets in\s+(\d+)\s+seconds", error_message)
+    m = re.search(RESET_ERROR_REGEX, error_message)
     if not m:
         msg = f"Could not parse reset seconds from: {error_message}"
         raise ValueError(msg)

@@ -22,6 +22,9 @@ def parse_flexible_datetime(v: str | datetime) -> datetime:
     return v
 
 
+KECCAK256_REGEX = re.compile(r"^0x[a-fA-F0-9]{64}$")
+
+
 def validate_keccak256(v: str | HexBytes | bytes) -> str:
     """Validate and normalize Keccak256 hash format."""
     # Convert HexBytes/bytes to string
@@ -37,11 +40,14 @@ def validate_keccak256(v: str | HexBytes | bytes) -> str:
         v = "0x" + v
 
     # Validate format: 0x followed by 64 hex characters
-    if not re.match(r"^0x[a-fA-F0-9]{64}$", v):
+    if not re.match(KECCAK256_REGEX, v):
         msg = f"Invalid Keccak256 hash format: {v}"
         raise ValueError(msg)
 
     return v
+
+
+CHECKSUM_ADDRESS_REGEX = re.compile(r"^0x[a-fA-F0-9]{40}$", re.IGNORECASE)
 
 
 def validate_eth_address(v: str | HexBytes | bytes) -> ChecksumAddress:
@@ -59,7 +65,7 @@ def validate_eth_address(v: str | HexBytes | bytes) -> ChecksumAddress:
         v = "0x" + v
 
     # Validate format: 0x followed by 40 hex characters
-    if not re.match(r"^0x[a-fA-F0-9]{40}$", v, re.IGNORECASE):
+    if not re.match(CHECKSUM_ADDRESS_REGEX, v):
         msg = f"Invalid Ethereum address format: {v}"
         raise ValueError(msg)
 
