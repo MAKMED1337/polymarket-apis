@@ -31,11 +31,6 @@ def validate_keccak256(v: str | HexBytes | bytes) -> str:
     if isinstance(v, HexBytes | bytes):
         v = v.hex()
 
-    # Ensure string and add 0x prefix if missing
-    if not isinstance(v, str):
-        msg = f"Expected string or bytes, got {type(v)}"
-        raise TypeError(msg)
-
     if not v.startswith("0x"):
         v = "0x" + v
 
@@ -55,11 +50,6 @@ def validate_eth_address(v: str | HexBytes | bytes) -> ChecksumAddress:
     # Convert HexBytes/bytes to string
     if isinstance(v, HexBytes | bytes):
         v = v.hex()
-
-    # Ensure string and add 0x prefix if missing
-    if not isinstance(v, str):
-        msg = f"Expected string or bytes, got {type(v)}"
-        raise TypeError(msg)
 
     if not v.startswith("0x"):
         v = "0x" + v
@@ -103,7 +93,7 @@ def validate_keccak_or_padded(v: Any) -> HexStr:
     v_str: HexStr = cast("HexStr", "0x" + v if not v.startswith("0x") else v)
 
     # Accept 66 character hex strings (0x + 64 hex chars)
-    if len(v_str) == 66 and all(c in "0123456789abcdefABCDEF" for c in v_str[2:]):
+    if KECCAK256_REGEX.match(v_str):
         return v_str
 
     msg = f"Invalid hash format: expected 66 characters (0x + 64 hex), got {len(v_str)}: {v_str}"
