@@ -40,7 +40,7 @@ def validate_keccak256(v: str | HexBytes | bytes) -> str:
         v = "0x" + v
 
     # Validate format: 0x followed by 64 hex characters
-    if not re.match(KECCAK256_REGEX, v):
+    if not KECCAK256_REGEX.match(v):
         msg = f"Invalid Keccak256 hash format: {v}"
         raise ValueError(msg)
 
@@ -65,7 +65,7 @@ def validate_eth_address(v: str | HexBytes | bytes) -> ChecksumAddress:
         v = "0x" + v
 
     # Validate format: 0x followed by 40 hex characters
-    if not re.match(CHECKSUM_ADDRESS_REGEX, v):
+    if not CHECKSUM_ADDRESS_REGEX.match(v):
         msg = f"Invalid Ethereum address format: {v}"
         raise ValueError(msg)
 

@@ -46,7 +46,7 @@ def _pack_primitive(typ: str, val: Any) -> bytes:
             return raw.encode()
         return raw
 
-    m = re.match(BYTES_REGEX, typ)
+    m = BYTES_REGEX.match(typ)
     if m:
         n = int(m.group(1))
         if isinstance(raw, int):
@@ -77,7 +77,7 @@ def _pack_primitive(typ: str, val: Any) -> bytes:
         addr = addr.rjust(40, "0")[-40:]
         return bytes.fromhex(addr)
 
-    m = re.match(INT_REGEX, typ)
+    m = INT_REGEX.match(typ)
     if m:
         bits = int(m.group(1)) if m.group(1) else 256
         size = bits // 8
